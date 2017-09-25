@@ -10,8 +10,8 @@
   * Start your own branch:
     - `git checkout -b your-feature-branch`
   * Check your work:
-    - Codestyle check: `make phpcs`
-    - Codestyle fixer: `make phpcbf`
+    - Codestyle check: `vendor/bin/phpcs -n --standard=PSR1,PSR2 src test`
+    - Codestyle fixer: `vendor/bin/phpcbf --standard=PSR1,PSR2 src test`
     - Run tests: `vendor/bin/phpunit`
     - Run tests with coverage: `vendor/bin/phpunit --coverage-html=build`
   * Check code coverage: build
