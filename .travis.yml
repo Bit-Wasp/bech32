@@ -1,6 +1,11 @@
 
 language: php
 
+# only build master branch (and PRs)
+branches:
+  only:
+    - "master"
+
 php:
   - hhvm
   - 5.6
