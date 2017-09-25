@@ -1,4 +1,16 @@
 {
+  "name": "bitwasp/bech32",
+  "description": "Pure (no dependencies) implementation of bech32",
+  "type": "library",
+  "homepage": "https://github.com/bit-wasp/bech32",
+  "license": "Unlicense",
+  "authors": [
+    {
+      "name": "Thomas Kerin",
+      "homepage": "https://thomaskerin.io",
+      "role": "Author"
+    }
+  ],
   "autoload": {
     "psr-4": {
       "BitWasp\\Bech32\\": "src/"
