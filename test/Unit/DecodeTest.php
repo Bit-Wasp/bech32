@@ -60,7 +60,6 @@ class DecodeTest extends TestCase
         \BitWasp\Bech32\decode($invalidChecksum);
     }
 
-
     /**
      * @return array
      */

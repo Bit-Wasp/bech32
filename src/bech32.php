@@ -220,3 +220,65 @@ function decode($sBech)
 
     return [$hrp, array_slice($data, 0, -6)];
 }
+
+/**
+ * @param int $version
+ * @param string $program
+ */
+function validateWitnessProgram($version, $program) {
+    if ($version < 0 || $version > 16) {
+        throw new \RuntimeException("Invalid witness version");
+    }
+
+    $sizeProgram = strlen($program);
+    if ($version === 0) {
+        if ($sizeProgram !== 20 && $sizeProgram !== 32) {
+            throw new \RuntimeException("Invalid size for V0 witness program");
+        }
+    }
+
+    if ($sizeProgram < 2 || $sizeProgram > 40) {
+        throw new \RuntimeException("Witness program size was out of valid range");
+    }
+}
+
+/**
+ * @param string $hrp
+ * @param int $version
+ * @param int $program
+ * @return string
+ */
+function encodeSegwit($hrp, $version, $program) {
+    $version = (int) $version;
+    validateWitnessProgram($version, $program);
+
+    $programChars = array_values(unpack('C*', $program));
+    $programBits = convertBits($programChars, count($programChars), 8, 5, true);
+    $encodeData = array_merge([$version], $programBits);
+
+    return encode($hrp, $encodeData);
+}
+
+/**
+ * @param string $hrp - human readable part
+ * @param string $bech32 - Bech32 string to be decoded
+ * @return array - [$version, $program]
+ * @throws Bech32Exception
+ */
+function decodeSegwit($hrp, $bech32) {
+
+    list ($hrpGot, $data) = decode($bech32);
+    if ($hrpGot !== $hrp) {
+        throw new Bech32Exception('Invalid prefix for address');
+    }
+
+    $decoded = convertBits(array_slice($data, 1), count($data) - 1, 5, 8, false);
+    $program = '';
+    foreach ($decoded as $char) {
+        $program .= chr($char);
+    }
+
+    validateWitnessProgram($data[0], $program);
+
+    return [$data[0], $program];
+}
