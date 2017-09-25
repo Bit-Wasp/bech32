@@ -33,6 +33,37 @@ class DecodeTest extends TestCase
     /**
      * @return array
      */
+    public function validChecksumProvider()
+    {
+        return [
+            ["A12UEL5L"],
+            ["an83characterlonghumanreadablepartthatcontainsthenumber1andtheexcludedcharactersbio1tt5tgs"],
+            ["abcdef1qpzry9x8gf2tvdw0s3jn54khce6mua7lmqqqxw"],
+            ["11qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqc8247j"],
+            ["split1checkupstagehandshakeupstreamerranterredcaperred2y9e3w"],
+        ];
+    }
+
+    /**
+     * https://github.com/sipa/bech32/blob/master/ref/python/tests.py#L90
+     * @param string $hasValidChecksum
+     * @dataProvider validChecksumProvider
+     */
+    public function testValidChecksum($hasValidChecksum)
+    {
+        \BitWasp\Bech32\decode($hasValidChecksum);
+
+        $pos = strrpos($hasValidChecksum, "1");
+        $invalidChecksum = substr($hasValidChecksum, 0, $pos+1) . chr(ord($hasValidChecksum[$pos+1])^1) . substr($hasValidChecksum, $pos+2);
+
+        $this->expectException(Bech32Exception::class);
+        \BitWasp\Bech32\decode($invalidChecksum);
+    }
+
+
+    /**
+     * @return array
+     */
     public function invalidChecksumProvider()
     {
         return [
@@ -48,6 +79,7 @@ class DecodeTest extends TestCase
     }
 
     /**
+     * https://github.com/sipa/bech32/blob/master/ref/python/tests.py#L100
      * @param string $hasValidChecksum
      * @dataProvider invalidChecksumProvider
      */
@@ -55,34 +87,5 @@ class DecodeTest extends TestCase
     {
         $this->expectException(Bech32Exception::class);
         \BitWasp\Bech32\decode($hasValidChecksum);
-    }
-
-    /**
-     * @return array
-     */
-    public function validChecksumProvider()
-    {
-        return [
-            ["A12UEL5L"],
-            ["an83characterlonghumanreadablepartthatcontainsthenumber1andtheexcludedcharactersbio1tt5tgs"],
-            ["abcdef1qpzry9x8gf2tvdw0s3jn54khce6mua7lmqqqxw"],
-            ["11qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqc8247j"],
-            ["split1checkupstagehandshakeupstreamerranterredcaperred2y9e3w"],
-        ];
-    }
-
-    /**
-     * @param string $hasValidChecksum
-     * @dataProvider validChecksumProvider
-     */
-    public function testValidChecksum($hasValidChecksum)
-    {
-        \BitWasp\Bech32\decode($hasValidChecksum);
-
-        $pos = strrpos($hasValidChecksum, "1");
-        $invalidChecksum = substr($hasValidChecksum, 0, $pos+1) . chr(ord($hasValidChecksum[$pos+1])^1) . substr($hasValidChecksum, $pos+2);
-
-        $this->expectException(Bech32Exception::class);
-        \BitWasp\Bech32\decode($invalidChecksum);
     }
 }

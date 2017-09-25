@@ -1,14 +1,16 @@
 <?php
 
-namespace BitWasp\Test\Bech32;
+namespace BitWasp\Test\Unit\Bech32;
 
 
-class MakesAddressTest extends TestCase
+use BitWasp\Test\Bech32\TestCase;
+
+class EncodeTest extends TestCase
 {
     /**
      * @return array
      */
-    public function makesAddressProvider()
+    public function validAddressProvider()
     {
         return [
             [
@@ -49,7 +51,8 @@ class MakesAddressTest extends TestCase
      * @param string $program
      * @return string
      */
-    public function witnessProgram($version, $program) {
+    public function witnessProgram($version, $program)
+    {
         if ($version < 0 || $version > 16) {
             throw new \RuntimeException("Invalid version for witness program");
         }
@@ -61,10 +64,11 @@ class MakesAddressTest extends TestCase
     }
 
     /**
+     * https://github.com/sipa/bech32/blob/master/ref/python/tests.py#L106
      * @param string $hrp
      * @param string $bech32
      * @param string $hexScript
-     * @dataProvider makesAddressProvider
+     * @dataProvider validAddressProvider
      */
     public function testValidAddress($hrp, $bech32, $hexScript)
     {
