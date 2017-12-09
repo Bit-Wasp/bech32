@@ -164,6 +164,10 @@ function encode($hrp, array $combinedDataChars)
 function decode($sBech)
 {
     $length = strlen($sBech);
+    if ($length < 8) {
+        throw new Bech32Exception("Bech32 string is too short");
+    }
+
     if ($length > 90) {
         throw new Bech32Exception('Bech32 string cannot exceed 90 characters in length');
     }
@@ -199,8 +203,16 @@ function decode($sBech)
         throw new Bech32Exception('Data contains mixture of higher/lower case characters');
     }
 
-    if ($positionOne < 1 || ($positionOne + 7) > $length) {
-        throw new Bech32Exception('Invalid location for `1` character');
+    if ($positionOne === -1) {
+        throw new Bech32Exception("Missing separator character");
+    }
+
+    if ($positionOne < 1) {
+        throw new Bech32Exception("Empty HRP");
+    }
+
+    if (($positionOne + 7) > $length) {
+        throw new Bech32Exception('Too short checksum');
     }
 
     $hrp = [];
@@ -224,31 +236,35 @@ function decode($sBech)
 /**
  * @param int $version
  * @param string $program
+ * @throws Bech32Exception
  */
-function validateWitnessProgram($version, $program) {
+function validateWitnessProgram($version, $program)
+{
     if ($version < 0 || $version > 16) {
-        throw new \RuntimeException("Invalid witness version");
+        throw new Bech32Exception("Invalid witness version");
     }
 
     $sizeProgram = strlen($program);
     if ($version === 0) {
         if ($sizeProgram !== 20 && $sizeProgram !== 32) {
-            throw new \RuntimeException("Invalid size for V0 witness program");
+            throw new Bech32Exception("Invalid size for V0 witness program");
         }
     }
 
     if ($sizeProgram < 2 || $sizeProgram > 40) {
-        throw new \RuntimeException("Witness program size was out of valid range");
+        throw new Bech32Exception("Witness program size was out of valid range");
     }
 }
 
 /**
- * @param string $hrp
- * @param int $version
- * @param int $program
- * @return string
+ * @param string $hrp - human readable part
+ * @param int $version - segwit script version
+ * @param string $program - segwit witness program
+ * @return string - the encoded address
+ * @throws Bech32Exception
  */
-function encodeSegwit($hrp, $version, $program) {
+function encodeSegwit($hrp, $version, $program)
+{
     $version = (int) $version;
     validateWitnessProgram($version, $program);
 
@@ -265,11 +281,16 @@ function encodeSegwit($hrp, $version, $program) {
  * @return array - [$version, $program]
  * @throws Bech32Exception
  */
-function decodeSegwit($hrp, $bech32) {
-
+function decodeSegwit($hrp, $bech32)
+{
     list ($hrpGot, $data) = decode($bech32);
     if ($hrpGot !== $hrp) {
         throw new Bech32Exception('Invalid prefix for address');
+    }
+
+    $dataLen = count($data);
+    if ($dataLen === 0 || $dataLen > 65) {
+        throw new Bech32Exception("Invalid length for segwit address");
     }
 
     $decoded = convertBits(array_slice($data, 1), count($data) - 1, 5, 8, false);

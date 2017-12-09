@@ -5,6 +5,8 @@ namespace BitWasp\Test\Bech32;
 
 use function BitWasp\Bech32\decodeSegwit;
 use function BitWasp\Bech32\encodeSegwit;
+use BitWasp\Bech32\Exception\Bech32Exception;
+use BitWasp\Test\Bech32\Provider\InvalidAddresses;
 use BitWasp\Test\Bech32\Provider\ValidAddresses;
 
 class SegwitAddressTest extends TestCase
@@ -48,7 +50,6 @@ class SegwitAddressTest extends TestCase
         ];
     }
 
-
     /**
      * @param string $bech32
      * @dataProvider invalidAddressProvider
@@ -72,5 +73,27 @@ class SegwitAddressTest extends TestCase
         }
 
         $this->assertTrue($threw, "expected testnet hrp to fail");
+    }
+
+    /**
+     * @return array
+     */
+    public function invalidAddressProvider2()
+    {
+        return InvalidAddresses::load();
+    }
+
+    /**
+     * @param $prefix
+     * @param $bech32
+     * @param $exceptionMsg
+     * @dataProvider invalidAddressProvider2
+     */
+    public function testInvalidAddressReasons($prefix, $bech32, $exceptionMsg)
+    {
+        $this->expectException(Bech32Exception::class);
+        $this->expectExceptionMessage($exceptionMsg);
+
+        decodeSegwit($prefix, $bech32);
     }
 }
