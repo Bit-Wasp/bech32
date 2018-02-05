@@ -49,12 +49,12 @@ function hrpExpand($hrp, $hrpLen)
     $expand1 = [];
     $expand2 = [];
     for ($i = 0; $i < $hrpLen; $i++) {
-        $o = ord($hrp[$i]);
+        $o = \ord($hrp[$i]);
         $expand1[] = $o >> 5;
         $expand2[] = $o & 31;
     }
 
-    return array_merge($expand1, [0], $expand2);
+    return \array_merge($expand1, [0], $expand2);
 }
 
 /**
@@ -109,8 +109,8 @@ function convertBits(array $data, $inLen, $fromBits, $toBits, $pad = true)
  */
 function createChecksum($hrp, array $convertedDataChars)
 {
-    $values = array_merge(hrpExpand($hrp, strlen($hrp)), $convertedDataChars);
-    $polyMod = polyMod(array_merge($values, [0, 0, 0, 0, 0, 0]), count($values) + 6) ^ 1;
+    $values = \array_merge(hrpExpand($hrp, \strlen($hrp)), $convertedDataChars);
+    $polyMod = polyMod(\array_merge($values, [0, 0, 0, 0, 0, 0]), \count($values) + 6) ^ 1;
     $results = [];
     for ($i = 0; $i < 6; $i++) {
         $results[$i] = ($polyMod >> 5 * (5 - $i)) & 31;
@@ -128,9 +128,9 @@ function createChecksum($hrp, array $convertedDataChars)
  */
 function verifyChecksum($hrp, array $convertedDataChars)
 {
-    $expandHrp = hrpExpand($hrp, strlen($hrp));
-    $r = array_merge($expandHrp, $convertedDataChars);
-    $poly = polyMod($r, count($r));
+    $expandHrp = hrpExpand($hrp, \strlen($hrp));
+    $r = \array_merge($expandHrp, $convertedDataChars);
+    $poly = polyMod($r, \count($r));
     return $poly === 1;
 }
 
@@ -142,14 +142,14 @@ function verifyChecksum($hrp, array $convertedDataChars)
 function encode($hrp, array $combinedDataChars)
 {
     $checksum = createChecksum($hrp, $combinedDataChars);
-    $characters = array_merge($combinedDataChars, $checksum);
+    $characters = \array_merge($combinedDataChars, $checksum);
 
     $encoded = [];
     for ($i = 0, $n = count($characters); $i < $n; $i++) {
         $encoded[$i] = CHARSET[$characters[$i]];
     }
 
-    return "{$hrp}1" . implode('', $encoded);
+    return "{$hrp}1" . \implode('', $encoded);
 }
 
 /**
@@ -159,7 +159,7 @@ function encode($hrp, array $combinedDataChars)
  */
 function decodeRaw($sBech)
 {
-    $length = strlen($sBech);
+    $length = \strlen($sBech);
     if ($length < 8) {
         throw new Bech32Exception("Bech32 string is too short");
     }
@@ -207,7 +207,7 @@ function decodeRaw($sBech)
         throw new Bech32Exception('Too short checksum');
     }
 
-    $hrp = pack("C*", ...array_slice($chars, 0, $positionOne));
+    $hrp = \pack("C*", ...\array_slice($chars, 0, $positionOne));
 
     $data = [];
     for ($i = $positionOne + 1; $i < $length; $i++) {
