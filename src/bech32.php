@@ -153,19 +153,15 @@ function encode($hrp, array $combinedDataChars)
 }
 
 /**
- * Validates a bech32 string and returns [$hrp, $dataChars] if
- * the conversion was successful. An exception is thrown on invalid
- * data.
- *
+ * @throws Bech32Exception
  * @param string $sBech - the bech32 encoded string
  * @return array - returns [$hrp, $dataChars]
- * @throws Bech32Exception
  */
-function decode($sBech)
+function decodeRaw($sBech)
 {
     $length = strlen($sBech);
-    if ($length > 90) {
-        throw new Bech32Exception('Bech32 string cannot exceed 90 characters in length');
+    if ($length < 8) {
+        throw new Bech32Exception("Bech32 string is too short");
     }
 
     $chars = array_values(unpack('C*', $sBech));
@@ -199,16 +195,20 @@ function decode($sBech)
         throw new Bech32Exception('Data contains mixture of higher/lower case characters');
     }
 
-    if ($positionOne < 1 || ($positionOne + 7) > $length) {
-        throw new Bech32Exception('Invalid location for `1` character');
+    if ($positionOne === -1) {
+        throw new Bech32Exception("Missing separator character");
     }
 
-    $hrp = [];
-    for ($i = 0; $i < $positionOne; $i++) {
-        $hrp[$i] = chr($chars[$i]);
+    if ($positionOne < 1) {
+        throw new Bech32Exception("Empty HRP");
     }
 
-    $hrp = implode('', $hrp);
+    if (($positionOne + 7) > $length) {
+        throw new Bech32Exception('Too short checksum');
+    }
+
+    $hrp = pack("C*", ...array_slice($chars, 0, $positionOne));
+
     $data = [];
     for ($i = $positionOne + 1; $i < $length; $i++) {
         $data[] = ($chars[$i] & 0x80) ? -1 : CHARKEY_KEY[$chars[$i]];
@@ -222,33 +222,56 @@ function decode($sBech)
 }
 
 /**
+ * Validates a bech32 string and returns [$hrp, $dataChars] if
+ * the conversion was successful. An exception is thrown on invalid
+ * data.
+ *
+ * @param string $sBech - the bech32 encoded string
+ * @return array - returns [$hrp, $dataChars]
+ * @throws Bech32Exception
+ */
+function decode($sBech)
+{
+    $length = strlen($sBech);
+    if ($length > 90) {
+        throw new Bech32Exception('Bech32 string cannot exceed 90 characters in length');
+    }
+
+    return decodeRaw($sBech);
+}
+
+/**
  * @param int $version
  * @param string $program
+ * @throws Bech32Exception
  */
-function validateWitnessProgram($version, $program) {
+function validateWitnessProgram($version, $program)
+{
     if ($version < 0 || $version > 16) {
-        throw new \RuntimeException("Invalid witness version");
+        throw new Bech32Exception("Invalid witness version");
     }
 
     $sizeProgram = strlen($program);
     if ($version === 0) {
         if ($sizeProgram !== 20 && $sizeProgram !== 32) {
-            throw new \RuntimeException("Invalid size for V0 witness program");
+            throw new Bech32Exception("Invalid size for V0 witness program");
         }
     }
 
     if ($sizeProgram < 2 || $sizeProgram > 40) {
-        throw new \RuntimeException("Witness program size was out of valid range");
+        throw new Bech32Exception("Witness program size was out of valid range");
     }
 }
 
 /**
- * @param string $hrp
- * @param int $version
- * @param int $program
- * @return string
+ * @param string $hrp - human readable part
+ * @param int $version - segwit script version
+ * @param string $program - segwit witness program
+ * @return string - the encoded address
+ * @throws Bech32Exception
  */
-function encodeSegwit($hrp, $version, $program) {
+function encodeSegwit($hrp, $version, $program)
+{
     $version = (int) $version;
     validateWitnessProgram($version, $program);
 
@@ -265,18 +288,20 @@ function encodeSegwit($hrp, $version, $program) {
  * @return array - [$version, $program]
  * @throws Bech32Exception
  */
-function decodeSegwit($hrp, $bech32) {
-
+function decodeSegwit($hrp, $bech32)
+{
     list ($hrpGot, $data) = decode($bech32);
     if ($hrpGot !== $hrp) {
         throw new Bech32Exception('Invalid prefix for address');
     }
 
-    $decoded = convertBits(array_slice($data, 1), count($data) - 1, 5, 8, false);
-    $program = '';
-    foreach ($decoded as $char) {
-        $program .= chr($char);
+    $dataLen = count($data);
+    if ($dataLen === 0 || $dataLen > 65) {
+        throw new Bech32Exception("Invalid length for segwit address");
     }
+
+    $decoded = convertBits(array_slice($data, 1), count($data) - 1, 5, 8, false);
+    $program = pack("C*", ...$decoded);
 
     validateWitnessProgram($data[0], $program);
 
