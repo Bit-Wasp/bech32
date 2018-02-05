@@ -153,23 +153,14 @@ function encode($hrp, array $combinedDataChars)
 }
 
 /**
- * Validates a bech32 string and returns [$hrp, $dataChars] if
- * the conversion was successful. An exception is thrown on invalid
- * data.
- *
+ * @throws Bech32Exception
  * @param string $sBech - the bech32 encoded string
  * @return array - returns [$hrp, $dataChars]
- * @throws Bech32Exception
  */
-function decode($sBech)
-{
+function decodeRaw($sBech) {
     $length = strlen($sBech);
     if ($length < 8) {
         throw new Bech32Exception("Bech32 string is too short");
-    }
-
-    if ($length > 90) {
-        throw new Bech32Exception('Bech32 string cannot exceed 90 characters in length');
     }
 
     $chars = array_values(unpack('C*', $sBech));
@@ -215,12 +206,8 @@ function decode($sBech)
         throw new Bech32Exception('Too short checksum');
     }
 
-    $hrp = [];
-    for ($i = 0; $i < $positionOne; $i++) {
-        $hrp[$i] = chr($chars[$i]);
-    }
+    $hrp = pack("C*", ...array_slice($chars, 0, $positionOne));
 
-    $hrp = implode('', $hrp);
     $data = [];
     for ($i = $positionOne + 1; $i < $length; $i++) {
         $data[] = ($chars[$i] & 0x80) ? -1 : CHARKEY_KEY[$chars[$i]];
@@ -231,6 +218,25 @@ function decode($sBech)
     }
 
     return [$hrp, array_slice($data, 0, -6)];
+}
+
+/**
+ * Validates a bech32 string and returns [$hrp, $dataChars] if
+ * the conversion was successful. An exception is thrown on invalid
+ * data.
+ *
+ * @param string $sBech - the bech32 encoded string
+ * @return array - returns [$hrp, $dataChars]
+ * @throws Bech32Exception
+ */
+function decode($sBech)
+{
+    $length = strlen($sBech);
+    if ($length > 90) {
+        throw new Bech32Exception('Bech32 string cannot exceed 90 characters in length');
+    }
+
+    return decodeRaw($sBech);
 }
 
 /**
@@ -294,10 +300,7 @@ function decodeSegwit($hrp, $bech32)
     }
 
     $decoded = convertBits(array_slice($data, 1), count($data) - 1, 5, 8, false);
-    $program = '';
-    foreach ($decoded as $char) {
-        $program .= chr($char);
-    }
+    $program = pack("C*", ...$decoded);
 
     validateWitnessProgram($data[0], $program);
 
