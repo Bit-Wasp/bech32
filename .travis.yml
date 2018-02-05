@@ -15,23 +15,18 @@ php:
 
 env:
   - PHPUNIT=true
-  - PHPUNIT=true COVERAGE=true
 
 dist: trusty
 
 matrix:
   exclude:
       # dont want coverage on all runs, will include runs with just PHPUNIT
-    - php: 7.2
-      env: PHPUNIT=true COVERAGE=true
-    - php: 7.1
-      env: PHPUNIT=true COVERAGE=true
-    - php: 7.0
-      env: PHPUNIT=true COVERAGE=true
+    - php: 5.6
+      env: PHPUNIT=true
 
   include:
       # add tests without coverage
-      # add extra test runs for php7: secp256k1+coverage, codestyle, examples
+      # add extra test runs for php7: coverage, codestyle
     - php: 5.6
       env: PHPUNIT=true COVERAGE=true
     - php: 7.0
