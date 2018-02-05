@@ -157,7 +157,8 @@ function encode($hrp, array $combinedDataChars)
  * @param string $sBech - the bech32 encoded string
  * @return array - returns [$hrp, $dataChars]
  */
-function decodeRaw($sBech) {
+function decodeRaw($sBech)
+{
     $length = strlen($sBech);
     if ($length < 8) {
         throw new Bech32Exception("Bech32 string is too short");
