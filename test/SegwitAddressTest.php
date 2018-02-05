@@ -2,7 +2,6 @@
 
 namespace BitWasp\Test\Bech32;
 
-
 use function BitWasp\Bech32\decodeSegwit;
 use function BitWasp\Bech32\encodeSegwit;
 use BitWasp\Bech32\Exception\Bech32Exception;
@@ -36,7 +35,8 @@ class SegwitAddressTest extends TestCase
     }
 
 
-    public function invalidAddressProvider() {
+    public function invalidAddressProvider()
+    {
         return [
             ["tc1qw508d6qejxtdg4y5r3zarvary0c5xw7kg3g4ty"],
             ["bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t5"],

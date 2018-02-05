@@ -45,7 +45,7 @@ before_script:
 
 script:
   - if [ "$PHPUNIT" = "true" ]; then vendor/bin/phpunit; fi
-  - if [ "$CODE_STYLE" = "true" ]; then vendor/bin/phpcs -n --standard=PSR1,PSR2 src tests && echo "Code style OK"; fi
+  - if [ "$CODE_STYLE" = "true" ]; then vendor/bin/phpcs -n --standard=PSR1,PSR2 src test && echo "Code style OK"; fi
 
 after_script:
   - if [ "${COVERAGE}" = "true" ]; then wget https://scrutinizer-ci.com/ocular.phar && php ocular.phar code-coverage:upload --format=php-clover build/coverage.clover; fi

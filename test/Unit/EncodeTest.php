@@ -2,7 +2,6 @@
 
 namespace BitWasp\Test\Unit\Bech32;
 
-
 use BitWasp\Test\Bech32\Provider\ValidAddresses;
 use BitWasp\Test\Bech32\TestCase;
 use BitWasp\Test\Bech32\Util;
@@ -46,5 +45,4 @@ class EncodeTest extends TestCase
         $encoded = \BitWasp\Bech32\encode($hrp, $data);
         $this->assertEquals(strtolower($bech32), $encoded);
     }
-
 }

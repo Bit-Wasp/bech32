@@ -2,7 +2,6 @@
 
 namespace BitWasp\Test\Unit\Bech32;
 
-
 use BitWasp\Bech32\Exception\Bech32Exception;
 use BitWasp\Test\Bech32\TestCase;
 

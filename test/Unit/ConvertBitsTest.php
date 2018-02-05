@@ -2,7 +2,6 @@
 
 namespace BitWasp\Test\Unit\Bech32;
 
-
 use BitWasp\Test\Bech32\TestCase;
 
 class ConvertBitsTest extends TestCase

@@ -8,7 +8,6 @@
 
 namespace BitWasp\Test\Bech32;
 
-
 class Util
 {
     public static function witnessProgram($version, $program)
