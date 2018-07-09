@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BitWasp\Test\Unit\Bech32;
 
 use BitWasp\Test\Bech32\Provider\ValidAddresses;

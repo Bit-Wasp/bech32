@@ -22,6 +22,9 @@
       "BitWasp\\Test\\Bech32\\": "test/"
     }
   },
+  "require": {
+    "php": ">=7.0"
+  },
   "require-dev": {
     "phpunit/phpunit": "^5.4.0",
     "squizlabs/php_codesniffer": "^2.0.0"

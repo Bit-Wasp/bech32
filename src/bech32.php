@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BitWasp\Bech32;
 
 use BitWasp\Bech32\Exception\Bech32Exception;
@@ -22,7 +24,7 @@ const CHARKEY_KEY = [
  * @param int $numValues
  * @return int
  */
-function polyMod(array $values, $numValues)
+function polyMod(array $values, int $numValues): int
 {
     $chk = 1;
     for ($i = 0; $i < $numValues; $i++) {
@@ -44,7 +46,7 @@ function polyMod(array $values, $numValues)
  * @param int $hrpLen
  * @return int[]
  */
-function hrpExpand($hrp, $hrpLen)
+function hrpExpand(string $hrp, int $hrpLen): array
 {
     $expand1 = [];
     $expand2 = [];
@@ -68,7 +70,7 @@ function hrpExpand($hrp, $hrpLen)
  * @return int[]
  * @throws Bech32Exception
  */
-function convertBits(array $data, $inLen, $fromBits, $toBits, $pad = true)
+function convertBits(array $data, int $inLen, int $fromBits, int $toBits, bool $pad = true): array
 {
     $acc = 0;
     $bits = 0;
@@ -107,7 +109,7 @@ function convertBits(array $data, $inLen, $fromBits, $toBits, $pad = true)
  * @param int[] $convertedDataChars
  * @return int[]
  */
-function createChecksum($hrp, array $convertedDataChars)
+function createChecksum(string $hrp, array $convertedDataChars): array
 {
     $values = \array_merge(hrpExpand($hrp, \strlen($hrp)), $convertedDataChars);
     $polyMod = polyMod(\array_merge($values, [0, 0, 0, 0, 0, 0]), \count($values) + 6) ^ 1;
@@ -126,7 +128,7 @@ function createChecksum($hrp, array $convertedDataChars)
  * @param int[] $convertedDataChars
  * @return bool
  */
-function verifyChecksum($hrp, array $convertedDataChars)
+function verifyChecksum(string $hrp, array $convertedDataChars): bool
 {
     $expandHrp = hrpExpand($hrp, \strlen($hrp));
     $r = \array_merge($expandHrp, $convertedDataChars);
@@ -139,13 +141,13 @@ function verifyChecksum($hrp, array $convertedDataChars)
  * @param array $combinedDataChars
  * @return string
  */
-function encode($hrp, array $combinedDataChars)
+function encode(string $hrp, array $combinedDataChars): string
 {
     $checksum = createChecksum($hrp, $combinedDataChars);
     $characters = \array_merge($combinedDataChars, $checksum);
 
     $encoded = [];
-    for ($i = 0, $n = count($characters); $i < $n; $i++) {
+    for ($i = 0, $n = \count($characters); $i < $n; $i++) {
         $encoded[$i] = CHARSET[$characters[$i]];
     }
 
@@ -157,7 +159,7 @@ function encode($hrp, array $combinedDataChars)
  * @param string $sBech - the bech32 encoded string
  * @return array - returns [$hrp, $dataChars]
  */
-function decodeRaw($sBech)
+function decodeRaw(string $sBech): array
 {
     $length = \strlen($sBech);
     if ($length < 8) {
@@ -230,7 +232,7 @@ function decodeRaw($sBech)
  * @return array - returns [$hrp, $dataChars]
  * @throws Bech32Exception
  */
-function decode($sBech)
+function decode(string $sBech): array
 {
     $length = strlen($sBech);
     if ($length > 90) {
@@ -245,7 +247,7 @@ function decode($sBech)
  * @param string $program
  * @throws Bech32Exception
  */
-function validateWitnessProgram($version, $program)
+function validateWitnessProgram(int $version, string $program)
 {
     if ($version < 0 || $version > 16) {
         throw new Bech32Exception("Invalid witness version");
@@ -270,7 +272,7 @@ function validateWitnessProgram($version, $program)
  * @return string - the encoded address
  * @throws Bech32Exception
  */
-function encodeSegwit($hrp, $version, $program)
+function encodeSegwit(string $hrp, int $version, string $program): string
 {
     $version = (int) $version;
     validateWitnessProgram($version, $program);
@@ -288,7 +290,7 @@ function encodeSegwit($hrp, $version, $program)
  * @return array - [$version, $program]
  * @throws Bech32Exception
  */
-function decodeSegwit($hrp, $bech32)
+function decodeSegwit(string $hrp, string $bech32): array
 {
     list ($hrpGot, $data) = decode($bech32);
     if ($hrpGot !== $hrp) {
