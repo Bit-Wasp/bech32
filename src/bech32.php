@@ -98,7 +98,7 @@ function convertBits(array $data, int $inLen, int $fromBits, int $toBits, bool $
             $ret[] = ($acc << $toBits - $bits) & $maxv;
         }
     } else if ($bits >= $fromBits || ((($acc << ($toBits - $bits))) & $maxv)) {
-        throw new Bech32Exception('Invalid data');
+        throw new Bech32Exception('Invalid data/padding');
     }
 
     return $ret;

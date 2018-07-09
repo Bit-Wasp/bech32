@@ -55,6 +55,11 @@ class InvalidAddresses
             "bc1gmk9yu",
             "Invalid length for segwit address"
         ],
+        [
+            "tb",
+            "tb1qrp33g0q5c5txsp9arysrx4k6zdkfs4nce4xj0gdcccefvpysxf3pjxtptv",
+            "Invalid data/padding"
+        ],
     ];
 
     /**
