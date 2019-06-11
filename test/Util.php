@@ -1,10 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: tk
- * Date: 9/25/17
- * Time: 2:20 PM
- */
+
+declare(strict_types=1);
 
 namespace BitWasp\Test\Bech32;
 

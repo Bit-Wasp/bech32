@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BitWasp\Test\Unit\Bech32;
 
 use BitWasp\Bech32\Exception\Bech32Exception;
@@ -14,14 +16,14 @@ class DecodeTest extends TestCase
             ["\x7f1axkwrx", "Out of range character in bech32 string"],
             ["\x801eym55h", "Out of range character in bech32 string"],
             ["an84characterslonghumanreadablepartthatcontainsthenumber1andtheexcludedcharactersbio1569pvx", "Bech32 string cannot exceed 90 characters in length"],
-            ["10a06t8", "Bech32 string is too short"],
-            ["1qzzfhee", "Empty HRP"],
             ["pzry9x0s0muk", "Missing separator character"],
             ["1pzry9x0s0muk", "Empty HRP"],
             ["x1b4n0q5v", "Invalid bech32 checksum"],
+            ["li1dgmt3", "Too short checksum"],
             ["de1lg7wt\xff", "Out of range character in bech32 string"],
             ["A1G7SGD8", "Invalid bech32 checksum"],
-            ["li1dgmt3", "Too short checksum"],
+            ["10a06t8", "Bech32 string is too short"],
+            ["1qzzfhee", "Empty HRP"],
             ["bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t5", "Invalid bech32 checksum"],
         ];
     }

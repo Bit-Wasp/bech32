@@ -7,7 +7,6 @@ branches:
     - "master"
 
 php:
-  - 5.6
   - 7.0
   - 7.1
   - 7.2
@@ -21,15 +20,15 @@ dist: trusty
 matrix:
   exclude:
       # dont want coverage on all runs, will include runs with just PHPUNIT
-    - php: 5.6
+    - php: 7.2
       env: PHPUNIT=true
 
   include:
       # add tests without coverage
       # add extra test runs for php7: coverage, codestyle
-    - php: 5.6
+    - php: 7.2
       env: PHPUNIT=true COVERAGE=true
-    - php: 7.0
+    - php: 7.2
       env: CODE_STYLE=true
 
 install:
