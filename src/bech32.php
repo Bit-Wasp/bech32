@@ -116,7 +116,9 @@ function createChecksum($hrp, array $convertedDataChars)
     $checksum_constant = BECH32_CONST;
 
     if ($convertedDataChars[0] > 0)
+    {
         $checksum_constant = BECH32M_CONST;
+    }
     
     $polyMod = polyMod(\array_merge($values, [0, 0, 0, 0, 0, 0]), \count($values) + 6) ^ $checksum_constant;
     $results = [];
@@ -139,15 +141,15 @@ function verifyChecksum($hrp, array $convertedDataChars)
     $expandHrp = hrpExpand($hrp, \strlen($hrp));
     $r = \array_merge($expandHrp, $convertedDataChars);
     $poly = polyMod($r, \count($r));
-
-    if ($poly === BECH32_CONST)
-        return BECH32_CONST;
-
-    if ($poly === BECH32M_CONST)
-        return BECH32M_CONST;
-
-    return -1;
     
+    if ($poly === BECH32_CONST || $poly === BECH32M_CONST)
+    {
+        return $poly;
+    }
+    else
+    {
+        return -1;
+    }
 }
 
 /**
@@ -205,7 +207,6 @@ function decodeRaw($sBech)
         if ($x === 0x31) {
             $positionOne = $i;
         }
-
     }
 
     if ($haveUpper && $haveLower) {
@@ -240,7 +241,9 @@ function decodeRaw($sBech)
     // final check: ensure all characters are in our CHARSET
     for ($i = $positionOne + 1; $i < $length; $i++) {
         if (strpos(CHARSET, strtolower($sBech[$i])) === false)
+        {
             throw new Bech32Exception('Invalid character');
+        }
     }
     
     return [$hrp, array_slice($data, 0, -6), $encoding_constant];
@@ -268,8 +271,10 @@ function decode($sBech)
         ($raw_decode[1][0] === 0 && $raw_decode[2] !== BECH32_CONST) ||
         ($raw_decode[1][0] > 0 && $raw_decode[2] !== BECH32M_CONST)
     ))
+    {
         throw new Bech32Exception('Invalid bech32 checksum');
-
+    }
+    
     return [$raw_decode[0], $raw_decode[1]];
 }
 

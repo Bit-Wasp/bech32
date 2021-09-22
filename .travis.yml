@@ -35,7 +35,7 @@ before_script:
   - if [ "${COVERAGE}" != "true" ] && [ "$TRAVIS_PHP_VERSION" != "nightly" ]; then phpenv config-rm xdebug.ini && echo "xdebug disabled"; fi
 
 script:
-  - if [ "$PHPUNIT" = "true" ]; then phpunit; fi
+  - if [ "$PHPUNIT" = "true" ]; then vendor/bin/phpunit; fi
   - if [ "$CODE_STYLE" = "true" ]; then vendor/bin/phpcs -n --standard=PSR1,PSR2 src test && echo "Code style OK"; fi
 
 after_script:
