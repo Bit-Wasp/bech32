@@ -12,6 +12,8 @@ class ConvertBitsTest extends TestCase
      */
     public function testInvalidCharValue()
     {
+        $this->expectException(\BitWasp\Bech32\Exception\Bech32Exception::class);
+        $this->expectExceptionMessage("Invalid value for convert bits");
         \Bitwasp\Bech32\convertBits([2 << 29], 1, 8, 5, true);
     }
 }

@@ -10,18 +10,20 @@ class DecodeTest extends TestCase
     public function failedDecodeFixtures()
     {
         return [
-            ["\x201nwldj5", "Out of range character in bech32 string"],
-            ["\x7f1axkwrx", "Out of range character in bech32 string"],
-            ["\x801eym55h", "Out of range character in bech32 string"],
-            ["an84characterslonghumanreadablepartthatcontainsthenumber1andtheexcludedcharactersbio1569pvx", "Bech32 string cannot exceed 90 characters in length"],
-            ["10a06t8", "Bech32 string is too short"],
-            ["1qzzfhee", "Empty HRP"],
-            ["pzry9x0s0muk", "Missing separator character"],
-            ["1pzry9x0s0muk", "Empty HRP"],
-            ["x1b4n0q5v", "Invalid bech32 checksum"],
-            ["de1lg7wt\xff", "Out of range character in bech32 string"],
-            ["A1G7SGD8", "Invalid bech32 checksum"],
-            ["li1dgmt3", "Too short checksum"],
+            ["\x201xj0phk", "Out of range character in bech32 string"],
+            ["\x7F1g6xzxy", "Out of range character in bech32 string"],
+            ["\x801vctc34", "Out of range character in bech32 string"],
+            ["an84characterslonghumanreadablepartthatcontainsthetheexcludedcharactersbioandnumber11d6pts4", "Bech32 string cannot exceed 90 characters in length"],
+            ["qyrz8wqd2c9m", "Missing separator character"],
+            ["1qyrz8wqd2c9m", "Empty HRP"],
+            ["y1b0jsk6g", "Invalid bech32 checksum"],
+            ["lt1igcx5c0", "Invalid character"],
+            ["in1muywd", "Too short checksum"],
+            ["mm1crxm3i", "Invalid bech32 checksum"],
+            ["au1s5cgom", "Invalid character"],
+            ["M1VUXWEZ", "Invalid bech32 checksum"],
+            ["16plkw9", "Bech32 string is too short"],
+            ["1p2gdwpf", "Empty HRP"],
             ["bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t5", "Invalid bech32 checksum"],
         ];
     }
@@ -43,14 +45,14 @@ class DecodeTest extends TestCase
      */
     public function validChecksumProvider()
     {
-        return [
-            ["A12UEL5L"],
-            ["a12uel5l"],
-            ["an83characterlonghumanreadablepartthatcontainsthenumber1andtheexcludedcharactersbio1tt5tgs"],
-            ["abcdef1qpzry9x8gf2tvdw0s3jn54khce6mua7lmqqqxw"],
-            ["11qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqc8247j"],
-            ["split1checkupstagehandshakeupstreamerranterredcaperred2y9e3w"],
-            ["?1ezyfcl"],
+        return [            
+            ["A1LQFN3A"],
+            ["a1lqfn3a"],
+            ["an83characterlonghumanreadablepartthatcontainsthetheexcludedcharactersbioandnumber11sg7hg6"],
+            ["abcdef1l7aum6echk45nj3s0wdvt2fg8x9yrzpqzd3ryx"],
+            ["11llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllludsr8"],
+            ["split1checkupstagehandshakeupstreamerranterredcaperredlc445v"],
+            ["?1v759aa"],
         ];
     }
 
@@ -84,6 +86,7 @@ class DecodeTest extends TestCase
             ["x1b4n0q5v"],
             ["li1dgmt3"],
             ["de1lg7wt"."\xff"],
+            ["bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t5"]            
         ];
     }
 
