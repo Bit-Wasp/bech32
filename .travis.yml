@@ -23,7 +23,7 @@ matrix:
   include:
       # add tests without coverage
       # add extra test runs for php7: coverage, codestyle
-    - php: 7.0
+    - php: 7.4
       env: CODE_STYLE=true
     - php: 8.0
       env: CODE_STYLE=true

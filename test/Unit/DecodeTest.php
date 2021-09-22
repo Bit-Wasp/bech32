@@ -45,7 +45,7 @@ class DecodeTest extends TestCase
      */
     public function validChecksumProvider()
     {
-        return [            
+        return [
             ["A1LQFN3A"],
             ["a1lqfn3a"],
             ["an83characterlonghumanreadablepartthatcontainsthetheexcludedcharactersbioandnumber11sg7hg6"],
@@ -86,7 +86,7 @@ class DecodeTest extends TestCase
             ["x1b4n0q5v"],
             ["li1dgmt3"],
             ["de1lg7wt"."\xff"],
-            ["bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t5"]            
+            ["bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t5"]
         ];
     }
 
