@@ -21,9 +21,15 @@ env:
 os: linux
 
 matrix:
+  exclude:
+      # dont want coverage on all runs, will include runs with just PHPUNIT
+    - php: 5.6
+      env: PHPUNIT=true
   include:
       # add tests without coverage
       # add extra test runs for php7: coverage, codestyle
+    - php: 5.6
+      env: PHPUNIT=true COVERAGE=true
     - php: 7.4
       env: CODE_STYLE=true
     - php: 8.0
