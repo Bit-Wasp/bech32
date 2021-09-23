@@ -113,10 +113,10 @@ function convertBits(array $data, $inLen, $fromBits, $toBits, $pad = true)
 function createChecksum($hrp, array $convertedDataChars)
 {
     $values = \array_merge(hrpExpand($hrp, \strlen($hrp)), $convertedDataChars);
-    $checksum_constant = BECH32_CONST;
+    $checksum_constant = BECH32M_CONST;
 
-    if ($convertedDataChars[0] > 0) {
-        $checksum_constant = BECH32M_CONST;
+    if ($convertedDataChars[0] === 0) {
+        $checksum_constant = BECH32_CONST;
     }
     
     $polyMod = polyMod(\array_merge($values, [0, 0, 0, 0, 0, 0]), \count($values) + 6) ^ $checksum_constant;
@@ -263,7 +263,7 @@ function decode($sBech)
 
     if (sizeof($raw_decode[1]) > 0 && (
         ($raw_decode[1][0] === 0 && $raw_decode[2] !== BECH32_CONST) ||
-        ($raw_decode[1][0] > 0 && $raw_decode[2] !== BECH32M_CONST)
+        ($raw_decode[1][0] !== 0 && $raw_decode[2] !== BECH32M_CONST)
     )) {
         throw new Bech32Exception('Invalid bech32 checksum');
     }
