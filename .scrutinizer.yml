@@ -3,6 +3,7 @@ filter:
 
 before_commands:
     - "composer install --prefer-source --no-dev"
+    - 'composer global require "squizlabs/php_codesniffer=3.6"'
 
 tools:
     php_cpd: true
